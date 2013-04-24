@@ -63,7 +63,7 @@ function islandora_relationship_editor_theme() {
     'islandora_relationship_editor_custom_block' => array(
         'variables' => array('islandora_object' => NULL),
 	'template' => 'theme/related-objects-block',
-//      	'file' => 'theme/related-objects.theme.inc',
+//      	'file' => 'theme/related-objects-block.theme.inc',
     ),
 
   );
@@ -307,15 +307,5 @@ function islandora_relationship_editor_block_view_alter(&$data, $block) {
 /**
  * @} End of "defgroup block_example".
  */
-
-function template_preprocess_islandora_relationship_editor_custom_block(&$variables) {
-
-$mangusta = "MANGUSTA";
-$variables['mangusta'] = $mangusta;
-
-}
-
-
-
 
 
