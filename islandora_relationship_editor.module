@@ -59,6 +59,13 @@ function islandora_relationship_editor_theme() {
       'template' => 'theme/related-objects',
       'file' => 'theme/related_objects.theme.inc',
     ),
+    
+    'islandora_relationship_editor_custom_block' => array(
+        'variables' => array('islandora_object' => NULL),
+	'template' => 'theme/related-objects-block',
+//      	'file' => 'theme/related-objects.theme.inc',
+    ),
+
   );
 }
 
@@ -196,7 +203,8 @@ function islandora_relationship_editor_block_view($delta = '') {
  //**//      break;
     case 'rel_objects':
       $block['subject'] = t('Title of block (rel_objects)');
-      $block['content'] = islandora_relationship_editor_contents($delta);
+//      $block['content'] = islandora_relationship_editor_contents($delta);
+      $block['content'] = theme('islandora_relationship_editor_custom_block');
       break;
  //**//    case 'example_uppercase':
  //**//      $block['subject'] = t("uppercase this please");
@@ -218,7 +226,16 @@ function islandora_relationship_editor_contents($which_block) {
       // Block content can be returned in two formats: renderable arrays
       // (as here) are preferred though a simple string will work as well.
       // Block content created through the UI defaults to a string.
-      return array('#markup' => variable_get('islandora_relationship_editor_string',  t('A default value. This block was created at %time', array('%time' => date('c')))));
+
+//	$islandora_object = array('islandora_object' => NULL);
+//  $repository = $islandora_object->repository;
+//  $rels = $islandora_object->relationships->get();
+//  $output = theme('islandora_relationship_editor_related_objects', array('islandora_object' => $object));
+//  return array('Related objects' => $output);
+	return "TEST";	
+//      return array('#markup' => variable_get('islandora_relationship_editor_string',  t('A default value. This block was created at %time', array('%time' => date('c')))));
+
+
  //**//    case 'example_empty':
       // It is possible that a block not have any content, since it is
       // probably dynamically constructed. In this case, Drupal will not display
@@ -291,6 +308,12 @@ function islandora_relationship_editor_block_view_alter(&$data, $block) {
  * @} End of "defgroup block_example".
  */
 
+function template_preprocess_islandora_relationship_editor_custom_block(&$variables) {
+
+$mangusta = "MANGUSTA";
+$variables['mangusta'] = $mangusta;
+
+}
 
 
 
