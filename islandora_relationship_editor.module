@@ -117,30 +117,20 @@ function islandora_relationship_editor_block_info() {
   // provide initial settings for block weight, status, etc.
 
   // Many options are defined in hook_block_info():
-  //**//$blocks['example_configurable_text'] = array(
+//$blocks['example_configurable_text'] = array(
+$blocks['rel_objects'] = array(
     // info: The name of the block.
-  //**//  'info' => t('Example: configurable text string'),
+  'info' => t('Related objects'),
     // Block caching options (per role, per user, etc.)
-  //**//  'cache' => DRUPAL_CACHE_PER_ROLE, // default
-  //**//);
+//  'cache' => DRUPAL_CACHE_PER_ROLE, // default
+);
 
   // This sample shows how to provide default settings. In this case we'll
   // enable the block in the first sidebar and make it visible only on
   // 'node/*' pages. See the hook_block_info() documentation for these.
-  $blocks['related_objects'] = array(
-    'info' => t('Related objects'),
-    'status' => TRUE,
- //**//   'region' => 'sidebar_first',  // Not usually provided.
- //**//   'visibility' => BLOCK_VISIBILITY_LISTED,  // Not usually provided.
- //**//   'pages' => 'node/*', // Not usually provided here.
-  );
-
- //**//  $blocks['example_uppercase'] = array(
- //**//    // info: The name of the block.
- //**//    'info' => t('Example: uppercase this please'),
- //**//    'status' => TRUE,
- //**//   'region' => 'sidebar_first',  // Not usually provided.
- //**//  );
+//$blocks['related_objects'] = array(
+//    'info' => t('Related objects1'),
+//  );
 
   return $blocks;
 }
@@ -154,9 +144,8 @@ function islandora_relationship_editor_block_configure($delta = '') {
   // The $delta parameter tells us which block is being configured.
   // In this example, we'll allow the administrator to customize
   // the text of the 'configurable text string' block defined in this module.
-
   $form = array();
-  if ($delta == 'related_objects') {
+  if ($delta == 'rel_objects') {
     // All we need to provide is the specific configuration options for our
     // block. Drupal will take care of the standard block configuration options
     // (block title, page visibility, etc.) and the save button.
@@ -180,7 +169,8 @@ function islandora_relationship_editor_block_configure($delta = '') {
 function islandora_relationship_editor_block_save($delta = '', $edit = array()) {
   // We need to save settings from the configuration form.
   // We need to check $delta to make sure we are saving the right block.
-  if ($delta == 'related_objects') {
+
+  if ($delta == 'rel_objects') {
     // Have Drupal save the string to the database.
     variable_set('islandora_relationship_editor_string', $edit['islandora_relationship_editor_string']);
   }
@@ -204,8 +194,8 @@ function islandora_relationship_editor_block_view($delta = '') {
  //**//      // function.
  //**//      $block['content'] = islandora_relationship_editor_contents($delta);
  //**//      break;
-    case 'related_objects':
-      $block['subject'] = t('Title of second block (related_objects)');
+    case 'rel_objects':
+      $block['subject'] = t('Title of block (rel_objects)');
       $block['content'] = islandora_relationship_editor_contents($delta);
       break;
  //**//    case 'example_uppercase':
@@ -221,7 +211,7 @@ function islandora_relationship_editor_block_view($delta = '') {
  */
 function islandora_relationship_editor_contents($which_block) {
   switch ($which_block) {
-    case 'related_objects':
+    case 'rel_objects':
       // Modules would typically perform some database queries to fetch the
       // content for their blocks. Here, we'll just use the variable set in the
       // block configuration or, if none has set, a default value.
