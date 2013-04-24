@@ -117,12 +117,12 @@ function islandora_relationship_editor_block_info() {
   // provide initial settings for block weight, status, etc.
 
   // Many options are defined in hook_block_info():
-  $blocks['example_configurable_text'] = array(
+  //**//$blocks['example_configurable_text'] = array(
     // info: The name of the block.
-    'info' => t('Example: configurable text string'),
+  //**//  'info' => t('Example: configurable text string'),
     // Block caching options (per role, per user, etc.)
-    'cache' => DRUPAL_CACHE_PER_ROLE, // default
-  );
+  //**//  'cache' => DRUPAL_CACHE_PER_ROLE, // default
+  //**//);
 
   // This sample shows how to provide default settings. In this case we'll
   // enable the block in the first sidebar and make it visible only on
@@ -130,16 +130,16 @@ function islandora_relationship_editor_block_info() {
   $blocks['example_empty'] = array(
     'info' => t('Example: empty block'),
     'status' => TRUE,
-    'region' => 'sidebar_first',  // Not usually provided.
-    'visibility' => BLOCK_VISIBILITY_LISTED,  // Not usually provided.
-    'pages' => 'node/*', // Not usually provided here.
+ //**//   'region' => 'sidebar_first',  // Not usually provided.
+ //**//   'visibility' => BLOCK_VISIBILITY_LISTED,  // Not usually provided.
+ //**//   'pages' => 'node/*', // Not usually provided here.
   );
 
   $blocks['example_uppercase'] = array(
     // info: The name of the block.
     'info' => t('Example: uppercase this please'),
     'status' => TRUE,
-    'region' => 'sidebar_first',  // Not usually provided.
+ //**//   'region' => 'sidebar_first',  // Not usually provided.
   );
 
   return $blocks;
