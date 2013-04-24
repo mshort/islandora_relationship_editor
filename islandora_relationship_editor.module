@@ -258,14 +258,14 @@ function islandora_relationship_editor_block_list_alter(&$blocks) {
   // this example, we will modify the block list and append the search block at
   // the end of the list, so even if the administrator configures the block to
   // be on the top of the region, it will demote to bottom again.
-  foreach ($blocks as $bid => $block) {
-    if (($block->module == 'search') && ($block->delta == 'form')) {
-      // Remove the block from the list and append to the end.
-      unset($blocks[$bid]);
-      $blocks[$bid] = $block;
-      break;
-    }
-  }
+//**//  foreach ($blocks as $bid => $block) {
+//**//    if (($block->module == 'search') && ($block->delta == 'form')) {
+//**//      // Remove the block from the list and append to the end.
+//**//      unset($blocks[$bid]);
+//**//      $blocks[$bid] = $block;
+//**//      break;
+//**//    }
+//**//  }
 }
 
 /**
@@ -290,12 +290,12 @@ function islandora_relationship_editor_block_list_alter(&$blocks) {
  */
 function islandora_relationship_editor_block_view_alter(&$data, $block) {
   // We'll search for the string 'uppercase'.
-  if ((!empty($block->title) && stristr($block->title, 'uppercase')) || (!empty($data['subject']) && stristr($data['subject'], 'uppercase'))) {
-    // This will uppercase the default title.
-    $data['subject'] = isset($data['subject']) ? drupal_strtoupper($data['subject']) : '';
-    // This will uppercase a title set in the UI.
-    $block->title = isset($block->title) ? drupal_strtoupper($block->title) : '';
-  }
+//**//  if ((!empty($block->title) && stristr($block->title, 'uppercase')) || (!empty($data['subject']) && stristr($data['subject'], 'uppercase'))) {
+//**//    // This will uppercase the default title.
+//**//    $data['subject'] = isset($data['subject']) ? drupal_strtoupper($data['subject']) : '';
+//**//    // This will uppercase a title set in the UI.
+//**//    $block->title = isset($block->title) ? drupal_strtoupper($block->title) : '';
+//**//  }
 }
 /**
  * @} End of "defgroup block_example".
