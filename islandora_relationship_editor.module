@@ -169,6 +169,7 @@ function islandora_relationship_editor_block_configure($delta = '') {
       '#size' => 60,
       '#description' => t('The DSID of datastream which contains ontology xml.'),
       '#default_value' => variable_get('islandora_relationship_editor_ontology_dsid',  t('ONTOLOGY')),
+    );
     $form['islandora_relationship_editor_ontology_view'] = array(
       '#type' => 'textarea',
       '#disabled' => 'TRUE',
@@ -223,7 +224,8 @@ function islandora_relationship_editor_block_save($delta = '', $edit = array()) 
 
   if ($delta == 'rel_objects') {
     // Have Drupal save the string to the database.
-    variable_set('islandora_relationship_editor_ontology', $edit['islandora_relationship_editor_ontology']);
+    variable_set('islandora_relationship_editor_ontology_pid', $edit['islandora_relationship_editor_ontology_pid']);
+    variable_set('islandora_relationship_editor_ontology_dsid', $edit['islandora_relationship_editor_ontology_dsid']);
   }
   return;
 }
