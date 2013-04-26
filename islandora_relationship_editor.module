@@ -156,16 +156,60 @@ function islandora_relationship_editor_block_configure($delta = '') {
     // All we need to provide is the specific configuration options for our
     // block. Drupal will take care of the standard block configuration options
     // (block title, page visibility, etc.) and the save button.
-    $form['islandora_relationship_editor_ontology'] = array(
+    $form['islandora_relationship_editor_ontology_pid'] = array(
       '#type' => 'textfield',
-      '#title' => t('URL of ontology'),
+      '#title' => t('Object PID'),
       '#size' => 60,
-      '#description' => t('The URL of ontology xml file.'),
-      '#default_value' => variable_get('islandora_relationship_editor_ontology',  t('http://aims.fao.org/aos/')),
+      '#description' => t('The PID of object which contains ontology datastream.'),
+      '#default_value' => variable_get('islandora_relationship_editor_ontology_pid',  t('islandora:ontology')),
+    );
+    $form['islandora_relationship_editor_ontology_dsid'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Datastream DSID'),
+      '#size' => 60,
+      '#description' => t('The DSID of datastream which contains ontology xml.'),
+      '#default_value' => variable_get('islandora_relationship_editor_ontology_dsid',  t('ONTOLOGY')),
+    $form['islandora_relationship_editor_ontology_view'] = array(
+      '#type' => 'textarea',
+      '#disabled' => 'TRUE',
+      '#title' => t('Current ontology'),
+//      '#description' => t('The relations provided by ontology.'),
+//      '#default_value' => get_current_ontology('islandora:ontology', 'ONTOLOGY'),
+      '#default_value' => get_current_ontology(variable_get('islandora_relationship_editor_ontology_pid',  t('islandora:ontology')), variable_get('islandora_relationship_editor_ontology_dsid',  t('ONTOLOGY'))),
+
     );
   }
   return $form;
 }
+function get_ontology_file($ontologyurl){
+
+  $ch = curl_init($ontologyurl);
+  curl_setopt($ch, CURLOPT_HEADER, 0);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
+  $content = curl_exec($ch);
+  curl_close($ch);
+
+  return ($content);
+
+}
+
+function get_current_ontology($pid,$dsid){
+
+  $fedora_object = islandora_object_load($pid);
+  if (!$fedora_object) {
+    return ("Fedora Object isn't in the repo!");
+  }
+  $datastream = $fedora_object[$dsid];
+  if (!$datastream) {
+    return ("Datastream isn't in the repo!");
+  }
+
+
+
+  return ($datastream->content);
+}
+
+
 
 /**
  * Implements hook_block_save().
