@@ -5,11 +5,7 @@ $related = array();
 $pid = arg(2);
 $fedora_object = islandora_object_load($pid);
 
-if (!$fedora_object) {
-
-  $related[] = "No object";
-
-} else {
+if ($fedora_object) {
 
   $rels = $fedora_object->relationships->get();
   foreach ($rels as $key => $rel) {
