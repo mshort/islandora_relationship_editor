@@ -1,5 +1,5 @@
 <?php
-function template_preprocess_islandora_relationship_editor_custom_block(&$variables) {
+function template_preprocess_islandora_relationship_editor_block(&$variables) {
 
 $related = array();
 $pid = arg(2);
