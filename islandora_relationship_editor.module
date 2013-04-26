@@ -54,16 +54,16 @@ function islandora_relationship_editor_theme() {
       'template' => 'relationship-editor-table',
       'path' => drupal_get_path('module', 'islandora_relationship_editor') . '/theme',
     ),
-    'islandora_relationship_editor_related_objects' => array(
+/*    'islandora_relationship_editor_related_objects' => array(
       'variables' => array('islandora_object' => NULL),
       'template' => 'theme/related-objects',
       'file' => 'theme/related_objects.theme.inc',
     ),
-    
-    'islandora_relationship_editor_custom_block' => array(
+    */
+    'islandora_relationship_editor_block' => array(
         'variables' => array('islandora_object' => NULL),
 	'template' => 'theme/related-objects-block',
-//      	'file' => 'theme/related-objects-block.theme.inc',
+      	'file' => 'theme/related-objects-block.theme.inc',
     ),
 
   );
@@ -102,12 +102,12 @@ function get_possible_relationships($object_pid){
 
 /** 
  * Implements hook_islandora_view_object().
- */
+ 
 function islandora_relationship_editor_islandora_view_object($object, $page_number, $page_size) {
   $output = theme('islandora_relationship_editor_related_objects', array('islandora_object' => $object));
   return array('Related objects' => $output);
 }
-
+*/
 
 /**
  * Implements hook_block_info().
@@ -204,7 +204,7 @@ function islandora_relationship_editor_block_view($delta = '') {
     case 'rel_objects':
       $block['subject'] = t('Title of block (rel_objects)');
 //      $block['content'] = islandora_relationship_editor_contents($delta);
-      $block['content'] = theme('islandora_relationship_editor_custom_block');
+      $block['content'] = theme('islandora_relationship_editor_block');
       break;
  //**//    case 'example_uppercase':
  //**//      $block['subject'] = t("uppercase this please");
