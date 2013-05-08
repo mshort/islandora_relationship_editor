@@ -182,60 +182,68 @@ function islandora_relationship_editor_block_configure($delta = '') {
   }
   return $form;
 }
-function get_ontology_file($ontologyurl){
 
-  $ch = curl_init($ontologyurl);
-  curl_setopt($ch, CURLOPT_HEADER, 0);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
-  $content = curl_exec($ch);
-  curl_close($ch);
-
-  return ($content);
-
-}
-
-function get_current_ontology($pid,$dsid){
-
+function create_vocabulary(){
   include_once('arc2/ARC2.php');
-
+  $pid = variable_get('islandora_relationship_editor_ontology_pid',  t('islandora:ontology'));
+  $dsid = variable_get('islandora_relationship_editor_ontology_dsid',  t('ONTOLOGY'));
   $fedora_object = islandora_object_load($pid);
   if (!$fedora_object) {
-    return ("Fedora Object isn't in the repo!");
+    return (FALSE);
   }
   $datastream = $fedora_object[$dsid];
   if (!$datastream) {
-    return ("Datastream isn't in the repo!");
+    return (FALSE);
   }
-
-$namespaces = array();
-
-$parser = ARC2::getRDFParser();
-// http://fc2.to.cnr.it:8080/fedora/objects/islandora:ontology/datastreams/ONTOLOGY/content
-//$parser->parse("http://fc2.to.cnr.it:8080/fedora/objects/islandora:ontology/datastreams/ONTOLOGY/content");
-$xmlfile = "http://fc2.to.cnr.it:8080/fedora/objects/".$pid."/datastreams/".$dsid."/content";
-$parser->parse($xmlfile);
-$triples = $parser->getTriples();
-$terms = _rdfx_fetch_terms($triples);
-
-array_multisort($terms, SORT_ASC);
-
-//$vocabulary_prefix = "aos";
-//$vocabulary_uri = "http://aims.fao.org/aos/v1.0/";
-
-foreach ($parser->parser->nsp as $uri => $prefix) {
+  $namespaces = array();
+  $parser = ARC2::getRDFParser();
+  $fedora_url = variable_get('islandora_base_url', 'http://localhost:8080/fedora');
+  $xmlfilelink = $fedora_url."/objects/".$pid."/datastreams/".$dsid."/content";
+  $parser->parse($xmlfilelink);
+  $triples = $parser->getTriples();
+  $terms = _rdfx_fetch_terms($triples);
+  foreach ($parser->parser->nsp as $uri => $prefix) {
         $namespaces[$prefix] = $uri;
-}
-
+  }
   $vocabulary = array(
-      'uri' => $ns_uri,
       'terms' => $terms,
       'namespaces' => $namespaces,
   );
+  return ($vocabulary);
+}
 
+function get_current_vocabulary() {
+  $ireo_voc = &drupal_static(__FUNCTION__);
+
+  if (!isset($ireo_voc)) {
+    if ($cache = cache_get('islandora_relationship_editor_ontology_voc')) {
+      $ireo_voc = $cache->data;
+    }
+    else {
+      $ireo_voc = create_vocabulary();
+      cache_set('islandora_relationship_editor_ontology_voc', $ireo_voc, 'cache');
+    }
+  }
+  return $ireo_voc;
+}
+
+function update_current_vocabulary() {
+  $ireo_voc = &drupal_static(__FUNCTION__);
+
+  $ireo_voc = create_vocabulary();
+  cache_set('islandora_relationship_editor_ontology_voc', $ireo_voc, 'cache');
+  return(TRUE);
+}
+
+
+function get_current_ontology($pid,$dsid){
+
+//$vocabulary = create_vocabulary();
+$vocabulary = get_current_vocabulary();
 
 $servoc ="";
 
-foreach ($vocabulary[terms] as $term) {
+foreach ($vocabulary['terms'] as $term) {
 
 	list($term_ns, $term_local_name) = rdfx_split_uri($term['uri']);
 	$servoc .= '"<'.$term_local_name.'>"'." = ";
@@ -359,6 +367,8 @@ function _rdfx_fetch_terms(&$model) {
           $terms[$term_uri][$property] = _rdfx_query_find_uris($model, $query_x[$term_uri][$property]);
         }
       } 
+  array_multisort($terms, SORT_ASC);
+
   return $terms;
 }
 
@@ -599,6 +609,8 @@ function rdfx_term_types($reset = FALSE) {
 ///////////////////////////////
 //////////////////////////////////
 function rdfx_split_uri ($uri) {
+  include_once('arc2/ARC2.php');
+
   $parts = ARC2::splitURI($uri);
   return $parts;
 }
@@ -647,6 +659,7 @@ function islandora_relationship_editor_block_save($delta = '', $edit = array()) 
     // Have Drupal save the string to the database.
     variable_set('islandora_relationship_editor_ontology_pid', $edit['islandora_relationship_editor_ontology_pid']);
     variable_set('islandora_relationship_editor_ontology_dsid', $edit['islandora_relationship_editor_ontology_dsid']);
+    update_current_vocabulary();
   }
   return;
 }
