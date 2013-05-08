@@ -1,6 +1,10 @@
 <?php
 
 function islandora_relationship_editor_add_relationships(array $form, array &$form_state, $object_pid) {
+
+$options_relationship = get_possible_relationships($object_pid);
+$value_relationship = !empty($form_state['values']['relationship']) ? $form_state['values']['relationship'] : "";
+
   $form = array();
   $form['this'] = array(
     '#title' => t('This Object'),
@@ -11,8 +15,40 @@ function islandora_relationship_editor_add_relationships(array $form, array &$fo
   $form['relationship'] = array(
     '#type' => 'select',
     '#title' => t('Relationship'),
-    '#options' => get_possible_relationships($object_pid),
+    '#options' => $options_relationship,
+    '#required' => TRUE,
+    '#ajax' => array(
+      	'method' => 'replace',
+      	'effect' => 'fade',
+        'event' => 'change',
+        'callback' => 'relationship_ajax_callback',
+        'wrapper' => 'textfield_description_replace',
+     ),
   );
+/*  $form['description'] = array(
+    '#title' => t('Description'),
+    '#type' => 'textfield',
+        '#prefix' => '<div id="textfield_description_replace">',
+        '#suffix' => '</div>',
+    '#value' => textfield_description_value($value_relationship),
+    '#disabled' => FALSE,
+    '#ajax' => array(
+      	'method' => 'replace',
+      	'effect' => 'fade',
+        'event' => 'mousedown',
+        'callback' => 'relationship_ajax_callback',
+        'wrapper' => 'textfield_description_replace',
+     ),
+  );
+*/
+  $form['description'] = array(
+    '#markup' => textfield_description_value($value_relationship),
+        '#prefix' => '<div id="textfield_description_replace">',
+        '#suffix' => '</div>',
+  );
+
+
+
   $form['target'] = array(
     '#type' => 'textfield',
     '#title' => t('Target object'),
@@ -37,6 +73,28 @@ function islandora_relationship_editor_add_relationships(array $form, array &$fo
     '#value' => t('submit'),
   );
   return $form;
+
+}
+
+
+function relationship_ajax_callback($form, $form_state) {
+    return $form['description'];
+}
+
+function textfield_description_value($value_relationship) {
+  if (!empty($value_relationship)) {
+  $vocabulary = get_current_vocabulary();
+  $term = $vocabulary['terms'][$value_relationship];
+	if (isset($term['comment'])) {
+	  if (isset($term['comment']['en'])) {
+		$servoc = $term['comment']['en'];
+	  } else {
+		$servoc = reset($term['comment']);
+	  }
+	}
+	$value_description = $servoc;
+  }
+  return empty($value_description) ? "No description<HR>" : $value_description."<HR>";
 
 }
 

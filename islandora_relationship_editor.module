@@ -87,6 +87,24 @@ function islandora_relationship_editor_get_delete_path($objectPid, $namespace, $
  *    the Fedora pid of the object to which the relationship will apply
  */
 function get_possible_relationships($object_pid){
+
+$list_term = array();
+$vocabulary = get_current_vocabulary();
+foreach ($vocabulary['terms'] as $term) {
+  	list($term_ns, $term_local_name) = rdfx_split_uri($term['uri']);
+	if (isset($term['label'])) {
+	  if (isset($term['label']['en'])) {
+		$label = $term['label']['en'];
+	  } else {
+		$label = reset($term['label']);
+	  }
+	} else {
+	  $label = "";
+	}
+//	$list_term[$term_local_name] = t($label);
+	$list_term[$term['uri']] = t($label);
+}
+/*
   return array(
     'isDraftOf' => t('is draft of'),
     'hasDraft' => t('has draft'),
@@ -97,6 +115,10 @@ function get_possible_relationships($object_pid){
     'isResponseTo' => t('is response to'),
     'hasResponse' => t('has response'),
   );
+*/
+  array_multisort($list_term, SORT_ASC);
+
+  return $list_term;
 }
 
 
