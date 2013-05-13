@@ -24,6 +24,14 @@ if ($fedora_object) {
 }
 
 $variables['related'] = $related;
+$options_relationship = get_possible_relationships($pid);
+
+$list_ontology = "";
+foreach ($options_relationship as $list) {
+  $list_ontology .= $list."<BR><HR>";
+}
+
+$variables['list_ontology'] = $list_ontology;
 
 }
 
