@@ -23,7 +23,7 @@
     <?php endif; ?>
 
 <HR>
-<a class="colorbox-inline" href="?width=500&height=500&inline=true#id-of-content">Current ontology</a>
+<a class="colorbox-inline" href="?height=500&inline=true#id-of-content">Current ontology</a>
 
 <div style="display: none;">
 <div id="id-of-content">

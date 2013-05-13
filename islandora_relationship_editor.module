@@ -257,56 +257,98 @@ function update_current_vocabulary() {
   return(TRUE);
 }
 
+function current_ontology_inarray(){
 
-function get_current_ontology($pid,$dsid){
-
-//$vocabulary = create_vocabulary();
-$vocabulary = get_current_vocabulary();
-
-$servoc ="";
-
-foreach ($vocabulary['terms'] as $term) {
+  $vocabulary = get_current_vocabulary();
+/* $ontology = [property] [namespace] [label] [comment] [superproperty] [inverseof] */
+  $ontology = array();
+  $k = 0;
+  foreach ($vocabulary['terms'] as $term) {
 
 	list($term_ns, $term_local_name) = rdfx_split_uri($term['uri']);
-	$servoc .= '"<'.$term_local_name.'>"'." = ";
+	$ontology[$k]['property'] = $term_local_name;
+	$ontology[$k]['namespace'] = $term_ns;
 
+	$ontology[$k]['label'] = "";
 	if (isset($term['label'])) {
 	  if (isset($term['label']['en'])) {
-		$servoc .= $term['label']['en'];
+		$ontology[$k]['label'] = $term['label']['en'];
 	  } else {
-		$servoc .= reset($term['label']);
+		$ontology[$k]['label'] = reset($term['label']);
 	  }
 	}
-
+	$ontology[$k]['comment'] = "";
 	if (isset($term['comment'])) {
 	  if (isset($term['comment']['en'])) {
-		$servoc .= ": ".$term['comment']['en'];
+		$ontology[$k]['comment'] = $term['comment']['en'];
 	  } else {
-		$servoc .= ": ".reset($term['comment']);
+		$ontology[$k]['comment'] = reset($term['comment']);
 	  }
 	}
-	$servoc .= "\n";
+	$ontology[$k]['superproperty'] = "";
 	if (isset($term['superproperty'][0])) {
 	  list($sb_ns, $sb_name) = rdfx_split_uri($term['superproperty'][0]);
-	  $servoc .= "SubPropertyOf: ".$sb_name;
+	  $ontology[$k]['superproperty'] = $sb_name;
 	}
+	$ontology[$k]['inverseof'] = "";
 	if (isset($term['inverse'][0])) {
 	  list($sb_ns, $sb_name) = rdfx_split_uri($term['inverse'][0]);
-	  $servoc .= " - InverseOf: ".$sb_name;
+	  $ontology[$k]['inverseof'] = $sb_name;
+	}
+	$k++;
+  }
+  return ($ontology);
+}
+
+
+/* render ontology output for block view */
+function get_current_ontology($pid,$dsid){
+
+	$ontology = current_ontology_inarray();
+	$servoc ="";
+
+	foreach ($ontology as $term){
+		$servoc .= '"<'.$term['property'].'>"'." = ";
+		$servoc .= $term['label'];
+		$servoc .= ": ".$term['comment'];
+		$servoc .= "\n";
+		$servoc .= "SubPropertyOf: ".$term['superproperty'];
+		$servoc .= " - InverseOf: ".$term['inverseof'];
+		$servoc .= "\n\n";
+	}
+	return ($servoc);
+}
+
+/* render ontology output for lightbox view */
+function ser_current_ontology(){
+
+	$ontology = current_ontology_inarray();
+	$servoc ="<table>";
+	$servoc .= "<tr>";
+	$servoc .= "<td>Property</td>";
+	$servoc .= "<td>Label</td>";
+	$servoc .= "<td>Description</td>";
+	$servoc .= "<td>SuperProperty</td>";
+	$servoc .= "<td>Inverse Of</td>";
+	$servoc .= "</tr>";
+
+	foreach ($ontology as $term){
+
+		$servoc .= "<tr>";
+		$servoc .= "<td>".htmlentities($term['property'])."</td>";
+		$servoc .= "<td>".htmlentities($term['label'])."</td>";
+		$servoc .= "<td>".htmlentities($term['comment'])."</td>";
+		$servoc .= "<td>".htmlentities($term['superproperty'])."</td>";
+		$servoc .= "<td>".htmlentities($term['inverseof'])."</td>";
+		$servoc .= "</tr>";
 	}
 
-
-	$servoc .= "\n\n";
-
-
-
-
-
-}
+	$servoc .= "</table>";
 
   return ($servoc);
-
 }
+
+
 
 /////////////////////////////
 ////////////////////////////
