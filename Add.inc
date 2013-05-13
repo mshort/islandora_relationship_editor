@@ -109,9 +109,9 @@ function textfield_inverseof_value($value_relationship) {
   	$vocabulary = get_current_vocabulary();
   	$term = $vocabulary['terms'][$value_relationship];
 	if (isset($term['inverse'][0])) {
-//		$term1 = $vocabulary['terms'][$term['inverse'][0]];
-		list($term_ns, $value_inverse) = rdfx_split_uri($term['inverse'][0]);
-		$value_inverse = $value_inverse;
+//		list($term_ns, $value_inverse) = rdfx_split_uri($term['inverse'][0]);
+//		$value_inverse = $value_inverse;
+		$value_inverse = $term['inverse'][0];
 	}
   }
 
@@ -150,25 +150,30 @@ function has_inverseof_value($value_relationship) {
 }
 
 function islandora_relationship_editor_add_relationships_submit($form, &$form_state) {
-  $object = islandora_object_load($form_state['values']['this']);
+  $subject = islandora_object_load($form_state['values']['this']);
+  if (!$subject) {
+    drupal_set_message("Subject error: Fedora object doesn't exist.");
+    return ;
+  }
+
+
+  $object = islandora_object_load($form_state['values']['target']);
   if (!$object) {
-    drupal_set_message("Fedora object doesn't exist.");
+    drupal_set_message("Object error: Fedora object doesn't exist.");
+    return ;
   }
-
-/*
-TODO extract URI and Inverse URI and add relationship to RELS-EXT
-
-  $target = islandora_object_load($form_state['values']['target']);
-  if (!$target) {
-    drupal_set_message("Fedora object doesn't exist.");
-  }
-  $object->relationships->add(MYNS_URI, $form_state['values']['relationship'], $form_state['values']['target']);
+  list($rel_ns, $rel_name) = rdfx_split_uri($form_state['values']['relationship']);  
+  $subject->relationships->add($rel_ns, $rel_name, $form_state['values']['target']);
 
   if ($form_state['values']['is-symmetric'] == 1) {
-	  $target->relationships->add(MYNS_URI, $form_state['values']['sym-relationship'], $form_state['values']['this']);
+  	list($relinv_ns, $relinv_name) = rdfx_split_uri($form_state['values']['inv-relationship']);  
+	$object->relationships->add($relinv_ns, $relinv_name, $form_state['values']['this']);
   }
-*/
 
-  $form_state['redirect'] = "islandora/object/{$object->id}/manage/relationships";
+  $form_state['redirect'] = "islandora/object/{$subject->id}/manage/relationships";
 
 }
+
+
+
+
