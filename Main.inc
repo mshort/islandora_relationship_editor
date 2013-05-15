@@ -10,9 +10,10 @@ function islandora_relationship_editor_display_relationships(array $form, array 
   }
   $rels = $object->relationships->get();
   $create_table_rows = function($o) use ($object_pid) {
-    $o['relationship'] = $o['predicate']['namespace'] . $o['predicate']['value'];
+    $o['namespace'] = $o['predicate']['namespace']. " (xmlns:".$o['predicate']['alias'].")";
+    $o['relationship'] = $o['predicate']['value'];
     $o['object'] = $o['object']['value'] ? $o['object']['value'] : ($o['object']['literal'] ? $o['object']['literal'] : '');
-    $o['delete'] = l(t('Delete'), islandora_relationship_editor_get_delete_path($object_pid, $o['predicate']['alias'], $o['predicate']['value'], $o['object']));
+    $o['delete'] = l(t('Delete'), islandora_relationship_editor_get_delete_path($object_pid, $o['predicate']['namespace'], $o['predicate']['value'], $o['object']));
     if ($o['predicate']['namespace'] == 'info:fedora/fedora-system:def/model#') {
       $o['delete'] = t('Can\'t delete fedora model.');
     }
