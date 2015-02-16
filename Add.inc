@@ -1,10 +1,11 @@
 <?php
 
 function islandora_relationship_editor_add_relationships(array $form, array &$form_state, $object_pid) {
-
+    if (strpos(':', $object_pid) === FALSE) {
+      $object_pid = urldecode($object_pid);
+     }
 $options_relationship = get_possible_relationships($object_pid);
 $value_relationship = !empty($form_state['values']['relationship']) ? $form_state['values']['relationship'] : "";
-
   $form = array();
   $form['this'] = array(
     '#title' => t('This Object'),
@@ -82,6 +83,8 @@ $value_relationship = !empty($form_state['values']['relationship']) ? $form_stat
     '#type' => 'textfield',
     '#title' => t('Target object'),
     '#required' => TRUE,
+	'#autocomplete_path' => 'islandora/relationships/autocomplete/target/',
+	//Agregar autocomplete acá con los objetos
   );
 
   $form['symmetric'] = array(
@@ -275,7 +278,7 @@ function islandora_relationship_editor_add_relationships_submit($form, &$form_st
     form_set_error('target', "Object error: Fedora object doesn't exist.");
     $form_state['redirect'] = FALSE;
     return ;
-  }
+  } 
 
   list($rel_ns, $rel_name) = rdfx_split_uri($form_state['values']['relationship']);  
 

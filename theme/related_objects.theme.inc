@@ -6,7 +6,7 @@ function islandora_relationship_editor_preprocess_islandora_relationship_editor_
   $rels = $islandora_object->relationships->get();
   $related = array();
   foreach ($rels as $key => $rel) {
-    if (($rel['predicate']['alias'] != 'fedora') and ($rel['predicate']['alias'] != 'fedora-model')) {
+    if (($rel['predicate-uri'] = "http://d-nb.info/standards/elementset/gnd#')) {
        watchdog('rosie', 'on object ' . $rel['object']['value']);
        try {
          $object = $islandora_object->repository->getObject($rel['object']['value']);

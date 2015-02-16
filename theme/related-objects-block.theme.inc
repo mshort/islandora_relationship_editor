@@ -9,7 +9,7 @@ if ($fedora_object) {
 
   $rels = $fedora_object->relationships->get();
   foreach ($rels as $key => $rel) {
-    if (($rel['predicate']['alias'] != 'fedora') and ($rel['predicate']['alias'] != 'fedora-model')) {
+    if (($rel['predicate']['namespace'] === "http://d-nb.info/standards/elementset/gnd#")) {
        watchdog('rosie', 'on object ' . $rel['object']['value']);
        try {
          $object = $fedora_object->repository->getObject($rel['object']['value']);

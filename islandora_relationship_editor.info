@@ -3,6 +3,5 @@ description = Provides an interface for adding and removing RELS-EXT relations b
 package = Islandora customizations
 dependencies[] = islandora
 dependencies[] = block
-dependencies[] = colorbox
 version = 7.x-0.1
 core = 7.x

@@ -39,11 +39,70 @@ function islandora_relationship_editor_menu() {
     'access arguments' => array(FEDORA_METADATA_EDIT),
     'type' => MENU_CALLBACK,
   );
-
+  $items['islandora/relationships/autocomplete/target/%'] = array(
+    'page callback' => 'islandora_relationships_object_autocomplete',
+    'page arguments' => array(2),
+    'access arguments' => array(FEDORA_METADATA_EDIT),
+    'type' => MENU_CALLBACK,
+  );
+  $items['islandora/relationships/autocomplete/cmodel/'] = array(
+    'page callback' => 'islandora_content_model_autocomplete',
+    'page arguments' => array(2),
+    'access arguments' => array(FEDORA_METADATA_EDIT),
+    'type' => MENU_CALLBACK,
+  );
   return $items;
 }
-
-
+function islandora_relationships_object_autocomplete( $x,$x2,$cmodel) {
+  $matches = array();
+  //print_r($_GET['q']);
+  if (isset($_GET['q']))
+  	{
+  		$string=end(explode('/', $_GET['q']));
+		
+  $islandora_tuque = islandora_get_tuque_connection();
+  if ($cmodel)
+	  
+  {
+      $parent_query = <<<EOQ
+  SELECT ?pid ?title FROM <#ri>
+  WHERE {
+    ?pid <fedora-model:hasModel> <info:fedora/$cmodel> ;
+         <fedora-model:label> ?title
+  }
+EOQ;
+      $results = $islandora_tuque->repository->ri->sparqlQuery($parent_query, 'unlimited');
+    }
+   
+   else
+	   { $results = $islandora_tuque->api->a->findObjects('terms', '*' . $string . '*', 10);
+ 
+	   }
+//	   Need to parse results differently for the SPARQL query versus findObjects.
+	    if ($cmodel) {
+	      foreach ($results as $result) {
+	        if (strpos(drupal_strtoupper($result['title']['value']), drupal_strtoupper($string)) !== FALSE) {
+	          $matches[$result['pid']['value']] = $result['title']['value'] . ' (' . $result['pid']['value'] . ')';
+	        }
+	      }
+	    }
+	    else {
+			
+	      foreach ($results['results'] as $result) {
+	        // Empty array elements getting sent through.
+	        if (is_array($result['title'])) {
+	          $title = $result['title'][0];
+	        }
+	        else {
+	          $title = $result['title'];
+	        }
+	        $matches[$result['pid']] = $title . ' (' . $result['pid'] . ')';
+	      }
+	    }
+		}
+	    drupal_json_output($matches);
+	  }
+  
 /** 
  * Implements hook_theme().
  */
